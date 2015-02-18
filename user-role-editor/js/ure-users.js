@@ -85,7 +85,7 @@ function ure_post_move_users_command(data) {
         if (jQuery('#user_'+ data.users[i]).length>0) {
             jQuery('#user_'+ data.users[i]).prop('checked', true);
         } else {
-            var html = '<input type="checkbox" name="users[]" id="user_'+ data.users[i] +'" value="1" checked="checked" style="display: none;">';
+            var html = '<input type="checkbox" name="users[]" id="user_'+ data.users[i] +'" value="'+ data.users[i] +'" checked="checked" style="display: none;">';
             el.append(html);
         }
     }

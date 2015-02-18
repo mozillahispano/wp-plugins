@@ -1,0 +1,342 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Fancier Author Box v1.2.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-06-18 08:11+0100\n"
+"PO-Revision-Date: 2014-06-18 20:57:59+0000\n"
+"Last-Translator: Huy Tư Duy<huynv86@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-Language: \n"
+"X-Poedit-Country: \n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: ts-fab.php:53
+#@ ts-fab
+msgid "Settings"
+msgstr "Thiết lập"
+
+#: includes/ts-fab-construct-tabs.php:31
+#: includes/ts-fab-construct-tabs.php:201
+#@ ts-fab
+msgid "My Twitter profile"
+msgstr "Twitter của tôi"
+
+#: includes/ts-fab-construct-tabs.php:41
+#: includes/ts-fab-construct-tabs.php:211
+#@ ts-fab
+msgid "My Facebook profile"
+msgstr "Facebook của tôi"
+
+#: includes/ts-fab-construct-tabs.php:51
+#: includes/ts-fab-construct-tabs.php:221
+#@ ts-fab
+msgid "My Google+ profile"
+msgstr "Google+ của tôi"
+
+#: includes/ts-fab-construct-tabs.php:143
+#: includes/ts-fab-construct-tabs.php:147
+#@ ts-fab
+msgid "at"
+msgstr "của"
+
+#: includes/ts-fab-construct-tabs.php:298
+#@ ts-fab
+msgid "Latest posts by "
+msgstr "Bài mới nhất của "
+
+#: includes/ts-fab-construct-tabs.php:298
+#@ ts-fab
+msgid "see all"
+msgstr "Xem tất cả"
+
+#: includes/ts-fab-construct-tabs.php:350
+#@ ts-fab
+msgid "Bio"
+msgstr "Về tôi"
+
+#: includes/ts-fab-construct-tabs.php:352
+#@ ts-fab
+msgid "Latest Posts"
+msgstr "Bài mới"
+
+#: includes/ts-fab-settings.php:71
+#@ ts-fab
+msgid "Display Settings"
+msgstr "Hiển thị thiết lập"
+
+#: includes/ts-fab-settings.php:79
+#@ ts-fab
+msgid "Show in posts"
+msgstr "Hiển thị trong post"
+
+#: includes/ts-fab-settings.php:84
+#@ ts-fab
+msgid "Toggle displaying Fancier Author Box in posts"
+msgstr "Chế độ hiển thị Facier Author Box trong post"
+
+#: includes/ts-fab-settings.php:90
+#@ ts-fab
+msgid "Show in pages"
+msgstr "Hiển thị trong page"
+
+#: includes/ts-fab-settings.php:95
+#@ ts-fab
+msgid "Toggle displaying Fancier Author Box in pages."
+msgstr "Chế độ hiển thị Facier Author Box trong page"
+
+#: includes/ts-fab-settings.php:112
+#@ ts-fab
+msgid "Show in"
+msgstr "Hiển thị trong"
+
+#: includes/ts-fab-settings.php:126
+#@ ts-fab
+msgid "Latest posts"
+msgstr "Bài mới"
+
+#: includes/ts-fab-settings.php:131
+#@ ts-fab
+msgid "Toggle displaying latest posts tab"
+msgstr "Chế độ hiển thị thẻ post mới nhất"
+
+#: includes/ts-fab-settings.php:132
+#@ ts-fab
+msgid "Number of latest posts to show:"
+msgstr "Số lượng post mới nhất để hiển thị"
+
+#: includes/ts-fab-settings.php:139
+#@ ts-fab
+msgid "Color Settings"
+msgstr "Thiết lập màu"
+
+#: includes/ts-fab-settings.php:146
+#@ ts-fab
+msgid "Inactive tab colors"
+msgstr "Màu của thẻ chưa kich hoạt"
+
+#: includes/ts-fab-settings.php:153
+#: includes/ts-fab-settings.php:169
+#: includes/ts-fab-settings.php:185
+#@ ts-fab
+msgid "Background"
+msgstr "Màu nền"
+
+#: includes/ts-fab-settings.php:154
+#: includes/ts-fab-settings.php:170
+#: includes/ts-fab-settings.php:186
+#@ ts-fab
+msgid "Border"
+msgstr "Màu viền"
+
+#: includes/ts-fab-settings.php:155
+#: includes/ts-fab-settings.php:171
+#: includes/ts-fab-settings.php:187
+#@ ts-fab
+msgid "Color"
+msgstr "Màu"
+
+#: includes/ts-fab-settings.php:162
+#@ ts-fab
+msgid "Active tab colors"
+msgstr "Màu của thẻ đang kích hoạt"
+
+#: includes/ts-fab-settings.php:178
+#@ ts-fab
+msgid "Tab content colors"
+msgstr "Màu của các thẻ nội dung"
+
+#: includes/ts-fab-settings.php:211
+#@ ts-fab
+msgid "Select where and how Fancier Author Box appears in your posts, pages and custom posts."
+msgstr "Lựa chọn nơi nào và như thế nào để Fancier Author Box hiển thị trong post, page và custom post"
+
+#: includes/ts-fab-settings.php:240
+#: includes/ts-fab-settings.php:260
+#: includes/ts-fab-settings.php:281
+#@ ts-fab
+msgid "Above"
+msgstr "Ở trên"
+
+#: includes/ts-fab-settings.php:241
+#: includes/ts-fab-settings.php:261
+#: includes/ts-fab-settings.php:282
+#@ ts-fab
+msgid "Below"
+msgstr "Ở dưới"
+
+#: includes/ts-fab-settings.php:242
+#: includes/ts-fab-settings.php:262
+#: includes/ts-fab-settings.php:283
+#@ ts-fab
+msgid "Both"
+msgstr "Cả hai"
+
+#: includes/ts-fab-settings.php:243
+#: includes/ts-fab-settings.php:263
+#: includes/ts-fab-settings.php:284
+#@ ts-fab
+msgid "No"
+msgstr "Không"
+
+#: includes/ts-fab-settings.php:354
+#@ ts-fab
+msgid "The only author box plugin you'll ever need. Unless you need something fancier, like <a href=\"http://codecanyon.net/item/fanciest-author-box/2504522?ref=ThematoSoup\">Fanciest Author Box</a>."
+msgstr "Nếu plugin vẫn chưa làm bạn hài lòng, bạn không cần nó. Trừ phi bạn thực sự cần fancier với nhiều tính năng khác nữa, bạn có thể mua bản trả phí tại <a href=\"http://codecanyon.net/item/fanciest-author-box/2504522?ref=ThematoSoup\">Fanciest Author Box</a>."
+
+#: includes/ts-fab-settings.php:368
+#@ ts-fab
+msgid "Reset all color settings"
+msgstr "Thiết lập lại tất cả màu sắc"
+
+#: includes/ts-fab-user-settings.php:12
+#@ ts-fab
+msgid "User Details"
+msgstr "Chi tiết người dùng"
+
+#: includes/ts-fab-user-settings.php:21
+#@ ts-fab
+msgid "Display Fancier Author Box"
+msgstr "Hiển thị Fancier Author Box"
+
+#: includes/ts-fab-user-settings.php:25
+#@ ts-fab
+msgid "Do not show Fancier Author Box in your posts, pages and custom posts"
+msgstr "Không hiển thị Fancier Author Box trong post, page và custom post"
+
+#: includes/ts-fab-user-settings.php:112
+#@ ts-fab
+msgid "Position"
+msgstr "Vị trí"
+
+#: includes/ts-fab-user-settings.php:116
+#@ ts-fab
+msgid "Your position."
+msgstr "Vị trí của bạn"
+
+#: includes/ts-fab-user-settings.php:121
+#@ ts-fab
+msgid "Company"
+msgstr "Công ty"
+
+#: includes/ts-fab-user-settings.php:125
+#@ ts-fab
+msgid "Your company."
+msgstr "Công ty của bạn."
+
+#: includes/ts-fab-user-settings.php:130
+#@ ts-fab
+msgid "Company URL"
+msgstr "URL công ty"
+
+#: includes/ts-fab-construct-tabs.php:61
+#: includes/ts-fab-construct-tabs.php:231
+#@ ts-fab
+msgid "My LinkedIn profile"
+msgstr "Hồ sơ LinkedIn của "
+
+#: includes/ts-fab-construct-tabs.php:71
+#: includes/ts-fab-construct-tabs.php:241
+#@ ts-fab
+msgid "My Instagram profile"
+msgstr "Hồ sơ Instagram của tôi"
+
+#: includes/ts-fab-construct-tabs.php:81
+#: includes/ts-fab-construct-tabs.php:251
+#@ ts-fab
+msgid "My Flickr profile"
+msgstr "Hồ sơ Flickr của tôi"
+
+#: includes/ts-fab-construct-tabs.php:91
+#: includes/ts-fab-construct-tabs.php:261
+#@ ts-fab
+msgid "My Pinterest profile"
+msgstr "Hồ sơ Pinterest của tôi"
+
+#: includes/ts-fab-construct-tabs.php:101
+#: includes/ts-fab-construct-tabs.php:271
+#@ ts-fab
+msgid "My Tumblr blog"
+msgstr "Blog Tumblr của tôi"
+
+#: includes/ts-fab-construct-tabs.php:111
+#: includes/ts-fab-construct-tabs.php:281
+#@ ts-fab
+msgid "My YouTube channel"
+msgstr "Kênh YouTube của tôi"
+
+#: includes/ts-fab-construct-tabs.php:121
+#: includes/ts-fab-construct-tabs.php:291
+#@ ts-fab
+msgid "My Vimeo channel"
+msgstr "Kênh Vimeo của tôi"
+
+#: includes/ts-fab-construct-tabs.php:347
+#@ ts-fab
+msgid "The following two tabs change content below."
+msgstr "Hai thẻ thay đổi nội dung bên dưới."
+
+#: includes/ts-fab-user-settings.php:35
+#@ ts-fab
+msgid "Your Twitter username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ Twitter của bạn"
+
+#: includes/ts-fab-user-settings.php:43
+#@ ts-fab
+msgid "Your Facebook username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ Facebook của bạn"
+
+#: includes/ts-fab-user-settings.php:51
+#@ ts-fab
+msgid "Your Google+ ID/username or profile URL."
+msgstr "Tên người dùng/ID hoặc URL hồ sơ Google+ của bạn"
+
+#: includes/ts-fab-user-settings.php:59
+#@ ts-fab
+msgid "Your LinkedIn username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ LinkedIn của bạn"
+
+#: includes/ts-fab-user-settings.php:67
+#@ ts-fab
+msgid "Your Instagram username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ Instagram của bạn"
+
+#: includes/ts-fab-user-settings.php:75
+#@ ts-fab
+msgid "Your Flickr username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ Flickr của bạn"
+
+#: includes/ts-fab-user-settings.php:83
+#@ ts-fab
+msgid "Your Pinterest username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ Pinterest của bạn"
+
+#: includes/ts-fab-user-settings.php:91
+#@ ts-fab
+msgid "Your Tumblr username or blog URL."
+msgstr "Tên người dùng hoặc URL blog Tumblr của bạn"
+
+#: includes/ts-fab-user-settings.php:99
+#@ ts-fab
+msgid "Your YouTube username or profile URL."
+msgstr "Tên người dùng hoặc URL hồ sơ Youtube của bạn"
+
+#: includes/ts-fab-user-settings.php:107
+#@ ts-fab
+msgid "Your Vimeo username or profile URL"
+msgstr "Tên người dùng hoặc URL hồ sơ Vimeo của bạn"
+
+#: includes/ts-fab-user-settings.php:134
+#@ ts-fab
+msgid "Your company URL."
+msgstr "URL công ty của bạn"
+

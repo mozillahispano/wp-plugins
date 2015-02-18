@@ -1,6 +1,18 @@
-if ( typeof aioseop_data != 'undefined' ) {
-	aioseop_data = aioseop_data.json.replace(/&quot;/g, '"');
-	aioseop_data = jQuery.parseJSON( aioseop_data );
+if ( typeof aiosp_data != 'undefined' ) {
+	jQuery.each( aiosp_data, function( index, value ) {
+//		aiosp_data[index] = value.json.replace(/&quot;/g, '"');
+//		aiosp_data[index] = jQuery.parseJSON( value );
+		if ( index == 0 ) {
+			if ( typeof value.condshow == 'undefined' ) {
+				aiosp_data[index].condshow = [];
+			}
+		} else {
+			if ( typeof value.condshow != 'undefined' ) {
+				aiosp_data[0].condshow = jQuery.merge( aiosp_data[0].condshow, value.condshow );
+			}
+		}
+	});
+	aiosp_data = aiosp_data[0];
 }
 
 function toggleVisibility(id) {
@@ -12,10 +24,35 @@ function toggleVisibility(id) {
 }
 
 function countChars(field,cntfield) {
-	cntfield.value = field.value.length;
+	var extra = 0;
+	var field_size;
+	if ( ( field.name == 'aiosp_title' ) && ( typeof aiosp_title_extra !== 'undefined' ) ) {
+		extra = aiosp_title_extra;
+	}
+	
+	cntfield.value = field.value.length + extra;
+	if ( typeof field.size != 'undefined' ) {
+		field_size = field.size;
+	} else {
+		field_size = field.rows * field.cols;
+	}
+	if ( field_size < 10 ) return;
+	if ( cntfield.value > field_size ) {
+		cntfield.style.color = "#fff";
+		cntfield.style.backgroundColor = "#f00";
+	} else {
+		if ( cntfield.value > ( field_size - 6 ) ) {
+			cntfield.style.color = "#515151";
+			cntfield.style.backgroundColor = "#ff0";			
+		} else {
+			cntfield.style.color = "#515151";
+			cntfield.style.backgroundColor = "#eee";			
+		}
+	}
 }
 
 function aioseop_get_field_value( field ) {
+	if ( field.length == 0 ) return field;
 	cur = jQuery('[name=' + field + ']');
 	if ( cur.length == 0 ) return field;
 	type = cur.attr('type');
@@ -106,8 +143,8 @@ function aioseop_add_condshow_handlers( index, value ) {
 }
 
 function aioseop_do_condshow( condshow ) {
-	if ( typeof aioseop_data.condshow != 'undefined' ) {
-		jQuery.each(aioseop_data.condshow, function(index, value) {
+	if ( typeof aiosp_data.condshow != 'undefined' ) {
+		jQuery.each(aiosp_data.condshow, function(index, value) {
 			aioseop_do_condshow_match( index, value );
 			aioseop_add_condshow_handlers( index, value );
 		});
@@ -115,9 +152,9 @@ function aioseop_do_condshow( condshow ) {
 }
 
 jQuery(document).ready(function(){
-if (typeof aioseop_data != 'undefined') {
-	if ( typeof aioseop_data.condshow != 'undefined' ) {
-		aioseop_do_condshow( aioseop_data.condshow );
+if (typeof aiosp_data != 'undefined') {
+	if ( typeof aiosp_data.condshow != 'undefined' ) {
+		aioseop_do_condshow( aiosp_data.condshow );
 	}
 }
 });
@@ -194,7 +231,7 @@ function aioseop_handle_ajax_call( action, settings, options, success) {
 	aioseop_sack.setVar( "nonce-aioseop", jQuery('input[name="nonce-aioseop"]').val() );
 	
 	aioseop_sack.onError = function() {alert('Ajax error on saving.'); };
-	aioseop_sack.runAJAX();	
+	aioseop_sack.runAJAX();
 }
 
 function aioseop_handle_post_url( action, settings, options, success) {
@@ -241,8 +278,8 @@ jQuery(document).ready(function() {
 			jQuery(this).attr('previousValue', 'checked');
 		}
 	});
-	if ( typeof aioseop_data.pointers != 'undefined' ) {
-		jQuery.each(aioseop_data.pointers, function(index, value) {
+	if ( typeof aiosp_data.pointers != 'undefined' ) {
+		jQuery.each(aiosp_data.pointers, function(index, value) {
 			if ( value != 'undefined' && value.pointer_text != '' ) {
 				aioseop_show_pointer( index, value );				
 			}
@@ -254,11 +291,11 @@ jQuery(document).ready(function() {
 		return false;
 	});
 	*/
-	jQuery(".all-in-one-seo_page_all-in-one-seo-pack-aioseop_feature_manager #aiosp_settings_form .aioseop_settings_left").delegate("input[name='Submit']", "click", function(e) {
+	jQuery(".all-in-one-seo_page_all-in-one-seo-pack-pro-aioseop_feature_manager #aiosp_settings_form .aioseop_settings_left").delegate("input[name='Submit']", "click", function(e) {
 		e.preventDefault();
 		return false;
 	});
-	jQuery(".all-in-one-seo_page_all-in-one-seo-pack-aioseop_feature_manager #aiosp_settings_form").delegate("input[name='Submit']", "click", function(e) {
+	jQuery(".all-in-one-seo_page_all-in-one-seo-pack-pro-aioseop_feature_manager #aiosp_settings_form").delegate("input[name='Submit']", "click", function(e) {
 		e.preventDefault();
 		aioseop_handle_post_url('aioseop_ajax_save_settings', 'ajax_settings_message', jQuery('form#aiosp_settings_form').serialize(),
 			function() {
@@ -295,21 +332,14 @@ jQuery(document).ready(function() {
 		aioseop_handle_post_url('aioseop_ajax_scan_header', 'opengraph_scan_header', jQuery('div#aiosp_opengraph_scan_header').serialize() );
 		return false;
 	});
+	jQuery( 'input[name="aiosp_sitemap_posttypes[]"][value="all"], input[name="aiosp_sitemap_taxonomies[]"][value="all"]' ).click(function () {
+		jQuery(this).parents('div:eq(0)').find(':checkbox').attr('checked', this.checked);
+    });
+	jQuery( 'input[name="aiosp_sitemap_posttypes[]"][value!="all"], input[name="aiosp_sitemap_taxonomies[]"][value!="all"]' ).click(function () {
+		if ( !this.checked )
+			jQuery(this).parents('div:eq(0)').find('input[value="all"]:checkbox').attr('checked', this.checked);
+    });
 
-	jQuery('input[name="aiosp_sitemap_posttypes[]"][value="all"]').click(function () {
-		jQuery(this).parents('div:eq(0)').find(':checkbox').attr('checked', this.checked);
-    });
-	jQuery('input[name="aiosp_sitemap_taxonomies[]"][value="all"]').click(function () {
-		jQuery(this).parents('div:eq(0)').find(':checkbox').attr('checked', this.checked);
-    });
-	jQuery('input[name="aiosp_sitemap_posttypes[]"][value!="all"]').click(function () {
-		if ( !this.checked )
-			jQuery(this).parents('div:eq(0)').find('input[value="all"]:checkbox').attr('checked', this.checked);
-    });
-	jQuery('input[name="aiosp_sitemap_taxonomies[]"][value!="all"]').click(function () {
-		if ( !this.checked )
-			jQuery(this).parents('div:eq(0)').find('input[value="all"]:checkbox').attr('checked', this.checked);
-    });
 	jQuery(".aioseop_tab:not(:first)").hide();
     jQuery(".aioseop_tab:first").show();
     jQuery("a.aioseop_header_tab").click(function(){

@@ -8,7 +8,7 @@ function mfbfw_options_page() {
 
 	<div class="wrap">
 
-	<div id="icon-plugins" class="icon32"></div><h2><?php printf( __('Fancybox for WordPress (version %s)', 'mfbfw'), $version ); ?></h2>
+	<div id="icon-plugins" class="icon32"></div><h2><?php printf( __('Fancybox for WordPress (version %s)', 'mfbfw'), FBFW_VERSION ); ?></h2>
 
 	<br />
 
@@ -81,6 +81,7 @@ function mfbfw_options_page() {
 
 	<form method="post" action="">
 		<div style="text-align:center;padding:0 0 1.5em;margin:-15px 0 5px;">
+			<?php wp_nonce_field( 'mfbfw-options-reset' ); ?>
 			<input type="submit" name="mfbfw_update" id="reset" onClick="return confirmDefaults();" class="button-secondary" value="<?php esc_attr_e( 'Revert to defaults', 'mfbfw' ); ?>" />
 			<input type="hidden" name="action" value="reset" />
 		</div>

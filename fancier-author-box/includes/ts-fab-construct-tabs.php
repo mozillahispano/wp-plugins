@@ -179,9 +179,13 @@ function ts_fab_show_latest_posts( $context = '', $authorid = '' ) {
 		$author = get_userdata( $authorid );
 	}
 	
+	// Hook for custom post types selection
+	$post_types = apply_filters( 'ts_fab_show_latest_posts_type_hook', array( 'post' ) );
+
 	$latest_by_author = new WP_Query( array(
 		'posts_per_page' => $ts_fab_settings['latest_posts_count'],
-		'author' => $author->ID
+		'author'         => $author->ID,
+		'post_type'      => $post_types,
 	) );
 
 	// Create Fancier Author Box output

@@ -2,6 +2,8 @@
 
 class Stealth_Publish_Test extends WP_UnitTestCase {
 
+	protected static $transient_name = 'c2c_stealh_publish_stealth_ids';
+
 	function tearDown() {
 		parent::tearDown();
 		c2c_StealthPublish::reset();
@@ -13,7 +15,7 @@ class Stealth_Publish_Test extends WP_UnitTestCase {
 
 
 
-	/**
+	/*
 	 * HELPER FUNCTIONS
 	 */
 
@@ -25,7 +27,7 @@ class Stealth_Publish_Test extends WP_UnitTestCase {
 
 
 
-	/**
+	/*
 	 * FUNCTIONS FOR HOOKING ACTIONS/FILTERS
 	 */
 
@@ -45,11 +47,31 @@ class Stealth_Publish_Test extends WP_UnitTestCase {
 
 
 
-	/**
+	/*
 	 * TESTS
 	 */
 
 
+
+	function test_class_exists() {
+		$this->assertTrue( class_exists( 'c2c_StealthPublish' ) );
+	}
+
+	function test_version() {
+		$this->assertEquals( '2.5', c2c_StealthPublish::version() );
+	}
+
+	function test_init_action_triggers_do_init() {
+		$this->assertNotFalse( has_action( 'init', array( 'c2c_StealthPublish', 'do_init' ) ) );
+	}
+
+	function test_post_submitbox_misc_actions_action_triggers_add_ui() {
+		$this->assertNotFalse( has_action( 'post_submitbox_misc_actions', array( 'c2c_StealthPublish', 'add_ui' ) ) );
+	}
+
+	function test_wp_insert_post_data_filter_triggers_save_stealth_publish_status() {
+		$this->assertNotFalse( has_filter( 'wp_insert_post_data', array( 'c2c_StealthPublish', 'save_stealth_publish_status' ), 2, 2 ) );
+	}
 
 	function test_non_stealth_posts_not_affected_for_home() {
 		$post_ids = $this->factory->post->create_many( 5 );
@@ -68,6 +90,8 @@ class Stealth_Publish_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( have_posts() );
 		$this->assertEquals( 4, count( $GLOBALS['wp_query']->posts ) );
+
+		return $post_ids;
 	}
 
 	function test_stealth_post_not_listed_on_front_page() {
@@ -157,8 +181,24 @@ class Stealth_Publish_Test extends WP_UnitTestCase {
 		$this->assertFalse( defined( 'WP_IMPORTING' ) );
 	}
 
-	/* This test must be last since it results in the WP_IMPORTING constant
-	   being set. */
+	function test_stealth_post_ids_stored_in_transient() {
+		$this->test_stealth_post_not_listed_on_home();
+
+		$this->assertNotEmpty( get_transient( self::$transient_name ) );
+	}
+
+	function test_transient_is_deleted_after_post_update() {
+		$post_ids = $this->test_stealth_post_not_listed_on_home();
+
+		$post = get_post( $post_id[1] );
+		$post->post_status = 'pending';
+		wp_update_post( $post );
+
+		$this->assertEmpty( get_transient( self::$transient_name ) );
+	}
+
+
+	/* This test must be last since it results in  WP_IMPORTING constant being set. */
 
 	function test_stealth_post_publishes_silently() {
 		$post_id = $this->factory->post->create( array( 'post_status' => 'draft' ) );

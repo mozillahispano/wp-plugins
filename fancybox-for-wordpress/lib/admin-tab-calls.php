@@ -20,7 +20,7 @@
 									<div id="extraCallsBlock">
 
 										<label for="extraCalls">
-											<textarea rows="20" cols="50" class="large-text code" name="mfbfw[extraCalls]" wrap="physical" id="extraCalls"><?php echo ($settings['extraCalls']); ?></textarea>
+											<textarea rows="20" cols="50" class="large-text code" name="mfbfw[extraCallsData]" wrap="physical" id="extraCalls"><?php echo ($settings['extraCallsData']); ?></textarea>
 										</label><br /><br />
 
 										<small><strong><em><?php _e('Example:', 'mfbfw'); ?></em></strong></small><br />

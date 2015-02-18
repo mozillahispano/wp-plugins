@@ -302,6 +302,15 @@ print $reflection->getFileName();
 			<?php _e('Enable Debug Mode<br/><small><i>Note:  Email is not sent when in debug mode.</i></small>', MAILUSERS_I18N_DOMAIN); ?><br/>
 		</td>
 	</tr>
+	<tr style="display:none;">
+    <th><?php _e('Base64 Encode Email', MAILUSERS_I18N_DOMAIN); ?></th>
+		<td>
+			<input 	type="checkbox" disabled
+					name="mailusers_base64_encode" id="mailusers_base64_encode" value="true"
+					<?php if (mailusers_get_base64_encode()=='true') echo 'checked="checked"';?> ></input>
+			<?php _e('Enable Base64 Encoding<br/><small><i>Note:  All email will be Base64 encoded when enabled.</i></small>', MAILUSERS_I18N_DOMAIN); ?><br/>
+		</td>
+	</tr>
 	</table>
 
 	<p class="submit">
@@ -388,8 +397,23 @@ print $reflection->getFileName();
 		get_currentuserinfo();
 		global $post, $user_identity, $user_email ;
 
-		$from_name = $user_identity;
-		$from_address = $user_email;
+        $from_sender = 0;
+        $from_address = empty($user_email) ? get_bloginfo('email') : $user_email;
+        $from_name = empty($user_identity) ? get_bloginfo('name') : $user_identity;
+        
+
+        $override_name = mailusers_get_from_sender_name_override();
+        $override_address = mailusers_get_from_sender_address_override();
+
+        //  Override the send from address?
+        if (($from_sender == 1) && !empty($override_address) && is_email($override_address))
+        {
+
+            $from_address = $override_address ;
+            if (!empty($override_name)) $from_name = $override_name ;
+
+        }
+
 		$subject = mailusers_replace_sender_templates($subject, $from_name);
 		$mail_content = mailusers_replace_sender_templates($mail_content, $from_name);
 	

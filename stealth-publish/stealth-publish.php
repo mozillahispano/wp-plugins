@@ -1,35 +1,36 @@
 <?php
 /**
+ * Plugin Name: Stealth Publish
+ * Version:     2.5
+ * Plugin URI:  http://coffee2code.com/wp-plugins/stealth-publish/
+ * Author:      Scott Reilly
+ * Author URI:  http://coffee2code.com
+ * Text Domain: stealth-publish
+ * Domain Path: /lang/
+ * License:     GPLv2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ * Description: Prevent specified posts from being featured on the front page or in feeds, and from notifying external services of publication.
+ *
+ * Compatible with WordPress 3.6+ through 4.1+
+ *
+ * TODO:
+ *  * Split functionality into separate checkboxes:
+ *  * Hide from front page
+ *  * Hide from feeds
+ *  * Don't prevent a stealth post from being stealthy if it is explicitly
+ *    requested (by ID) in the query
+ *
+ * =>> Read the accompanying readme.txt file for instructions and documentation.
+ * =>> Also, visit the plugin's homepage for additional information and updates.
+ * =>> Or visit: https://wordpress.org/plugins/stealth-publish/
+ *
  * @package Stealth_Publish
- * @author Scott Reilly
- * @version 2.4
- */
-/*
-Plugin Name: Stealth Publish
-Version: 2.4
-Plugin URI: http://coffee2code.com/wp-plugins/stealth-publish/
-Author: Scott Reilly
-Author URI: http://coffee2code.com
-Text Domain: stealth-publish
-Domain Path: /lang/
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Description: Prevent specified posts from being featured on the front page or in feeds, and from notifying external services of publication.
-
-Compatible with WordPress 3.6+ through 3.8+
-
-TODO:
-	* Split functionality into separate checkboxes:
-	  * Hide from front page
-	  * Hide from feeds
-
-=>> Read the accompanying readme.txt file for instructions and documentation.
-=>> Also, visit the plugin's homepage for additional information and updates.
-=>> Or visit: http://wordpress.org/plugins/stealth-publish/
+ * @author  Scott Reilly
+ * @version 2.5
 */
 
 /*
-	Copyright (c) 2007-2014 by Scott Reilly (aka coffee2code)
+	Copyright (c) 2007-2015 by Scott Reilly (aka coffee2code)
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -52,9 +53,9 @@ if ( ! class_exists( 'c2c_StealthPublish' ) ) :
 
 class c2c_StealthPublish {
 
-	private static $field                   = 'stealth_publish';
-	private static $meta_key                = '_stealth-publish'; // Filterable via 'c2c_stealth_publish_meta_key' filter
-	private static $stealth_published_posts = array(); // For memoization
+	private static $field          = 'stealth_publish';
+	private static $meta_key       = '_stealth-publish'; // Filterable via 'c2c_stealth_publish_meta_key' filter
+	private static $transient_name = 'c2c_stealh_publish_stealth_ids';
 
 	/**
 	 * Returns version of the plugin.
@@ -62,7 +63,7 @@ class c2c_StealthPublish {
 	 * @since 2.2.1
 	 */
 	public static function version() {
-		return '2.4';
+		return '2.5';
 	}
 
 	/**
@@ -73,24 +74,24 @@ class c2c_StealthPublish {
 	}
 
 	/**
-	 * Reset memoized variables.
+	 * Reset any cached values.
 	 *
 	 * @since 2.4
 	 */
 	public static function reset() {
-		self::$stealth_published_posts = array();
+		delete_transient( self::$transient_name );
 	}
 
 	/**
-	 * Register actions/filters and allow for configuration
+	 * Register actions/filters and allow for configuration.
 	 *
 	 * @since 2.0
 	 * @uses apply_filters() Calls 'c2c_stealth_publish_meta_key' with default meta key name
 	 */
 	public static function do_init() {
 
-		// Load textdomain
-		load_plugin_textdomain( 'stealth-publish', false, basename( dirname( __FILE__ ) ) . DIRECTORY_SEPARATOR . 'lang' );
+		// Load textdomain.
+		load_plugin_textdomain( 'stealth-publish', false, basename( __DIR__ ) . DIRECTORY_SEPARATOR . 'lang' );
 
 		// Deprecated as of 2.3.
 		$meta_key = apply_filters( 'stealth_publish_meta_key', self::$meta_key );
@@ -99,13 +100,14 @@ class c2c_StealthPublish {
 		$meta_key = esc_attr( apply_filters( 'c2c_stealth_publish_meta_key', $meta_key ) );
 
 		// Only override the meta key name if one was specified. Otherwise the
-		// default remains (since a meta key is necessary)
+		// default remains (since a meta key is necessary).
 		if ( ! empty( $meta_key ) ) {
 			self::$meta_key = $meta_key;
 		}
 
 		// Register hooks
-		add_action( 'pre_get_posts',               array( __CLASS__, 'exclude_stealth_posts' ) );
+		add_filter( 'posts_where',                 array( __CLASS__, 'stealth_publish_where' ), 1, 2 );
+		//add_action( 'pre_get_posts',               array( __CLASS__, 'exclude_stealth_posts' ), 1000 );
 		add_action( 'post_submitbox_misc_actions', array( __CLASS__, 'add_ui' ) );
 		add_filter( 'wp_insert_post_data',         array( __CLASS__, 'save_stealth_publish_status' ), 2, 2 );
 		add_action( 'publish_post',                array( __CLASS__, 'publish_post' ), 1, 1 );
@@ -123,11 +125,14 @@ class c2c_StealthPublish {
 	 * @return bool     If true, then stealth posts should be excluded.
 	 */
 	private static function should_exclude_stealth_posts( $wp_query ) {
+		$siteurl = explode( '://', get_option( 'siteurl' ) );
+		$siteurl = array_pop( $siteurl );
+
 		return (
 			$wp_query->is_home ||
 			$wp_query->is_feed ||
 			$wp_query->is_front_page() ||
-			( trailingslashit( get_option( 'siteurl' ) ) == trailingslashit( 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ) )
+			( trailingslashit( $siteurl ) == trailingslashit( $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ) )
 		);
 	}
 
@@ -140,6 +145,7 @@ class c2c_StealthPublish {
 	 * values for the query.
 	 *
 	 * @since 2.4
+	 * @since 2.5 No longer actively used.
 	 *
 	 * @param WP_Query Query object.
 	 */
@@ -153,12 +159,12 @@ class c2c_StealthPublish {
 				$wp_query->query_vars['meta_query'] = array(
 					'relation' => 'OR',
 					array(
-						'key'     => '_stealth-publish',
+						'key'     => self::$meta_key,
 						'value'   => '', // This is needed to work around core bug #23268
 						'compare' => 'NOT EXISTS',
 					),
 					array(
-						'key'     => '_stealth-publish',
+						'key'     => self::$meta_key,
 						'value'   => '1',
 						'compare' => '!=',
 					)
@@ -176,8 +182,6 @@ class c2c_StealthPublish {
 	 *
 	 * @since 2.0
 	 * @uses apply_filters() Calls 'c2c_stealth_publish_default' with stealth publish state default (false)
-	 *
-	 * @return void (Text is echoed.)
 	 */
 	public static function add_ui() {
 		global $post;
@@ -203,8 +207,8 @@ class c2c_StealthPublish {
 	 *
 	 * @since 2.0
 	 *
-	 * @param array $data Data
-	 * @param array $postarr Array of post fields and values for post being saved
+	 * @param array  $data    Data
+	 * @param array  $postarr Array of post fields and values for post being saved
 	 * @return array The unmodified $data
 	 */
 	public static function save_stealth_publish_status( $data, $postarr ) {
@@ -215,6 +219,9 @@ class c2c_StealthPublish {
 			$new_value = isset( $postarr[ self::$field ] ) ? $postarr[ self::$field ] : '';
 			// TODO?: Delete the post meta if not setting the value to 1
 			update_post_meta( $postarr['ID'], self::$meta_key, $new_value );
+
+			// Reset cached values
+			self::reset();
 		}
 
 		return $data;
@@ -228,28 +235,27 @@ class c2c_StealthPublish {
 	 * @return array Post IDs of all stealth published posts
 	 */
 	public static function find_stealth_published_post_ids() {
-		if ( ! empty( self::$stealth_published_posts ) ) {
-			return self::$stealth_published_posts;
+		if ( false === ( $stealth_published_posts = get_transient( self::$transient_name ) ) ) {
+			global $wpdb;
+			$sql = "SELECT DISTINCT ID FROM $wpdb->posts AS p
+					LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id)
+					WHERE pm.meta_key = %s AND pm.meta_value = '1'
+					GROUP BY pm.post_id";
+			$stealth_published_posts = $wpdb->get_col( $wpdb->prepare( $sql, self::$meta_key ) );
+			set_transient( self::$transient_name, $stealth_published_posts, 12 * HOUR_IN_SECONDS );
 		}
 
-		global $wpdb;
-		$sql = "SELECT DISTINCT ID FROM $wpdb->posts AS p
-				LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id)
-				WHERE pm.meta_key = %s AND pm.meta_value = '1'
-				GROUP BY pm.post_id";
-		self::$stealth_published_posts = $wpdb->get_col( $wpdb->prepare( $sql, self::$meta_key ) );
-
-		return self::$stealth_published_posts;
+		return $stealth_published_posts;
 	}
 
 	/**
-	 * Modifies the WP query to exclude stealth published posts from feeds and the home page
+	 * Modifies the WP query to exclude stealth published posts from feeds and the home page.
 	 *
 	 * @since 1.0
 	 *
-	 * @param string $where The current WHERE condition string
+	 * @param string   $where    The current WHERE condition string
 	 * @param WP_Query $wp_query The query object (not provided by WP prior to WP 3.0)
-	 * @return string The potentially amended WHERE condition string to exclude stealth published posts
+	 * @return string  The potentially amended WHERE condition string to exclude stealth published posts
 	 */
 	public static function stealth_publish_where( $where, $wp_query = null ) {
 		global $wpdb;
@@ -262,7 +268,7 @@ class c2c_StealthPublish {
 		if ( self::should_exclude_stealth_posts( $wp_query ) ) {
 			$stealth_published_posts = implode( ',', self::find_stealth_published_post_ids() );
 			if ( ! empty( $stealth_published_posts ) ) {
-				$where .= " AND $wpdb->posts.ID NOT IN ( $stealth_published_posts )";
+				$where .= " AND {$wpdb->posts}.ID NOT IN ( {$stealth_published_posts} )";
 			}
 		}
 		return $where;

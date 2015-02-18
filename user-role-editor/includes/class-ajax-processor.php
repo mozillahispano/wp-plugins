@@ -28,7 +28,7 @@ class URE_Ajax_Processor {
     
     protected function ajax_check_permissions() {
         
-        if (!wp_verify_nonce($_REQUEST['wp_nonce'], 'user-role-editor-users')) {
+        if (!wp_verify_nonce($_REQUEST['wp_nonce'], 'user-role-editor')) {
             echo json_encode(array('result'=>'error', 'message'=>'URE: Wrong or expired request'));
             die;
         }
@@ -63,11 +63,25 @@ class URE_Ajax_Processor {
         }
         
         $users = $this->lib->get_users_without_role();    
-        $answer = array('result'=>'success', 'users'=>$users, 'new_role'=>$new_role);
+        $answer = array('result'=>'success', 'users'=>$users, 'new_role'=>$new_role, 'message'=>'success');
         
         return $answer;
     }
     // end of get_users_without_role()
+    
+    
+    protected function _dispatch($action) {
+        switch ($action) {
+            case 'get_users_without_role':
+                $answer = $this->get_users_without_role();
+                break;
+            default:
+                $answer = array('result' => 'error', 'message' => 'unknown action "' . $action . '"');
+        }
+        
+        return $answer;
+    }
+    // end of _dispatch()
     
     
     /**
@@ -75,19 +89,14 @@ class URE_Ajax_Processor {
      */    
     public function dispatch() {
         
-        self::ajax_check_permissions();
+        $this->ajax_check_permissions();
         
         $action = filter_input(INPUT_POST, 'sub_action', FILTER_SANITIZE_STRING);
         if (empty($action)) {
             $action = filter_input(INPUT_GET, 'sub_action', FILTER_SANITIZE_STRING);
         }
-        switch ($action) {            
-            case 'get_users_without_role':
-                $answer = self::get_users_without_role();
-                break;
-          default:
-                $answer = array('result'=>'error', 'message'=>'unknown action "'. $action .'"');
-        }
+
+        $answer = $this->_dispatch($action);
         
         $json_answer = json_encode($answer);
         echo $json_answer;

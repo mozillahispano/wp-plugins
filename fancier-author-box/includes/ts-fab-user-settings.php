@@ -9,6 +9,8 @@ add_action( 'edit_user_profile', 'ts_fab_extra_user_details' );
 add_action( 'show_user_profile', 'ts_fab_extra_user_details' );
 function ts_fab_extra_user_details( $user ) { ?>
 
+	<?php if ( user_can( $user, 'edit_posts') ) { ?>
+
 	<h3>Fancier Author Box <?php _e( 'User Details', 'ts-fab' ); ?></h3>
 
 	<table class="form-table">
@@ -135,6 +137,8 @@ function ts_fab_extra_user_details( $user ) { ?>
 			</td>
 		</tr>
 	</table>
+
+	<?php } // endif ?>
 
 <?php }
 

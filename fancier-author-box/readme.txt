@@ -3,7 +3,7 @@ Contributors: slobodanmanic, nikolicdragan
 Tags: author, author description, author box, author bio, fancier author box, thematosoup author box, author profile, author bio box, multi author, facebook, twitter, google plus, linkedin, vimeo, youtube, instagram, pinterest, tumblr
 Requires at least: 3.1
 Tested up to: 3.8.1
-Stable tag: 1.2.5
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,18 @@ No, this is not possible in the free version.
 
 == Changelog ==
 
+
+= 1.3.2 =
+
+* Removes additional profile fields for users who can’t write posts
+
+= 1.3.1 =
+
+* Added Vietnamese translation, credits: http://huytuduy.com/
+
+= 1.3 =
+
+* Adds ts_fab_show_latest_posts_type_hook filter hook that allows changing post types used in latest posts tab.
 
 = 1.2.5 =
 

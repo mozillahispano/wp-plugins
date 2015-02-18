@@ -2,7 +2,7 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 /*
 Plugin Name: Email Users
-Version: 4.6.7
+Version: 4.7.0
 Plugin URI: http://wordpress.org/extend/plugins/email-users/
 Description: Allows the site editors to send an e-mail to the blog users. Credits to <a href="http://www.catalinionescu.com">Catalin Ionescu</a> who gave me (Vincent Pratt) some ideas for the plugin and has made a similar plugin. Bug reports and corrections by Cyril Crua, Pokey and Mike Walsh.  Development for enhancements and bug fixes since version 4.1 primarily by <a href="http://michaelwalsh.org">Mike Walsh</a>.
 Author: Mike Walsh & MarvinLabs
@@ -27,7 +27,7 @@ Author URI: http://www.michaelwalsh.org
 */
 
 // Version of the plugin
-define( 'MAILUSERS_CURRENT_VERSION', '4.6.7');
+define( 'MAILUSERS_CURRENT_VERSION', '4.7.0');
 
 // i18n plugin domain
 define( 'MAILUSERS_I18N_DOMAIN', 'email-users' );
@@ -136,6 +136,8 @@ function mailusers_get_default_plugin_settings($option = null)
 		'mailusers_footer' => '<h5 style="border-top: 1px solid #eee;">' . __('Powered by', MAILUSERS_I18N_DOMAIN) . ' <a href="http://wordpress.org/plugins/email-users/">Email Users</a>.</h5>',
 		// Mail User - Default setting for Debug
 		'mailusers_debug' => 'false',
+		// Mail User - Default setting for Base64 Encode
+		'mailusers_base64_encode' => 'false',
 	) ;
 
     if (array_key_exists($option, $default_plugin_settings))
@@ -239,12 +241,14 @@ function mailusers_add_default_capabilities() {
 	$role = get_role('contributor');
 
     if ($role !== null) {
+        //error_log(sprintf("%s::%s  contributor", basename(__FILE__), __LINE__)) ;
 	    $role->add_cap(MAILUSERS_EMAIL_SINGLE_USER_CAP);
     }
 
 	$role = get_role('author');
 
     if ($role !== null) {
+        //error_log(sprintf("%s::%s  author", basename(__FILE__), __LINE__)) ;
 	    $role->add_cap(MAILUSERS_EMAIL_SINGLE_USER_CAP);
 	    $role->add_cap(MAILUSERS_EMAIL_MULTIPLE_USERS_CAP);
     }
@@ -252,6 +256,7 @@ function mailusers_add_default_capabilities() {
 	$role = get_role('editor');
 
     if ($role !== null) {
+        //error_log(sprintf("%s::%s  editor", basename(__FILE__), __LINE__)) ;
 	    $role->add_cap(MAILUSERS_NOTIFY_USERS_CAP);
 	    $role->add_cap(MAILUSERS_EMAIL_SINGLE_USER_CAP);
 	    $role->add_cap(MAILUSERS_EMAIL_MULTIPLE_USERS_CAP);
@@ -261,6 +266,7 @@ function mailusers_add_default_capabilities() {
 	$role = get_role('administrator');
 
     if ($role !== null) {
+        //error_log(sprintf("%s::%s  admin", basename(__FILE__), __LINE__)) ;
 	    $role->add_cap(MAILUSERS_NOTIFY_USERS_CAP);
 	    $role->add_cap(MAILUSERS_EMAIL_SINGLE_USER_CAP);
 	    $role->add_cap(MAILUSERS_EMAIL_MULTIPLE_USERS_CAP);
@@ -672,6 +678,7 @@ function mailusers_admin_init() {
     register_setting('email_users', 'mailusers_add_mime_version_header') ;
     register_setting('email_users', 'mailusers_footer') ;
     register_setting('email_users', 'mailusers_debug') ;
+    register_setting('email_users', 'mailusers_base64_encode') ;
     register_setting('email_users', 'mailusers_version') ;
 }
 
@@ -1012,7 +1019,7 @@ function mailusers_update_copy_sender( $copy_sender ) {
 }
 
 /**
- * Wrapper for the from send exclude setting
+ * Wrapper for the DEBUG setting
  */
 function mailusers_get_debug() {
     $option = get_option( 'mailusers_debug' );
@@ -1024,10 +1031,29 @@ function mailusers_get_debug() {
 }
 
 /**
- * Wrapper for the from sender exclude setting
+ * Wrapper for the DEBUG setting
  */
 function mailusers_update_debug( $debug ) {
 	return update_option( 'mailusers_debug', $debug );
+}
+
+/**
+ * Wrapper for the Base64 Encoding setting
+ */
+function mailusers_get_base64_encode() {
+    $option = get_option( 'mailusers_base64_encode' );
+
+    if ($option === false)
+        $option = mailusers_get_default_plugin_settings( 'mailusers_base64_encode' );
+
+    return $option;
+}
+
+/**
+ * Wrapper for the DEBUG setting
+ */
+function mailusers_update_base64_encode( $base64_encode ) {
+	return update_option( 'mailusers_base64_encode', $base64_encode );
 }
 
 /**
@@ -1419,6 +1445,7 @@ function mailusers_replace_sender_templates($text, $sender_name) {
 function mailusers_send_mail($recipients = array(), $subject = '', $message = '', $type='plaintext', $sender_name='', $sender_email='') {
     
     $headers = array() ;
+    $base64 = (mailusers_get_base64_encode() == 'true') ;
     $omit = (mailusers_get_omit_display_names() == 'true') ;
 
     //  Default the To: and Cc: values to the send email address
@@ -1437,9 +1464,10 @@ function mailusers_send_mail($recipients = array(), $subject = '', $message = ''
     if ($return_path == '') $return_path = $sender_email;
 
     //  Build headers
-	$headers[] = ($omit) ? $sender_email : sprintf('From: "%s" <%s>', $sender_name, $sender_email);
+	$headers[] = ($omit) ? sprintf('From: %s', $sender_email) : sprintf('From: "%s" <%s>', $sender_name, $sender_email);
 	$headers[] = sprintf('Return-Path: <%s>', $return_path);
-	$headers[] = ($omit) ? $sender_email : sprintf('Reply-To: "%s" <%s>', $sender_name, $sender_email);
+	$headers[] = ($omit) ? sprintf('Reply-To: %s', $sender_email) : sprintf('Reply-To: "%s" <%s>', $sender_name, $sender_email);
+    //$headers[] = 'MIME-Version: 1.0';
 
     if (mailusers_get_add_x_mailer_header() == 'true')
 	    $headers[] = sprintf('X-Mailer: PHP %s', phpversion()) ;
@@ -1462,6 +1490,13 @@ function mailusers_send_mail($recipients = array(), $subject = '', $message = ''
 		$mailtext = wordwrap(strip_tags($message . "\n" . $footer), 80, "\n");
 	}
 
+    //  Base64 Encode email?
+    if ($base64) {
+        //$subject = "=?UTF-8?B?" . base64_encode($subject) . "?=";
+        $headers[] = "Content-Transfer-Encoding: base64";
+        //$mailtext = base64_encode($mailtext);
+    }
+
 	// If unique recipient, send mail using TO field.
 	//--
 	// If multiple recipients, use the BCC field
@@ -1481,7 +1516,13 @@ function mailusers_send_mail($recipients = array(), $subject = '', $message = ''
 		        mailusers_debug_wp_mail($to, $subject, $mailtext, $headers);
 			}
 			
-			@wp_mail($to, $subject, $mailtext, $headers);
+            do_action('mailusers_before_wp_mail') ;
+            if ($base64)
+			    @wp_mail($to, sprintf("=UTF-8?B?%s?=", base64_encode($subject)), base64_encode($mailtext), $headers);
+            else
+			    @wp_mail($to, $subject, $mailtext, $headers);
+            do_action('mailusers_after_wp_mail') ;
+
 			$num_sent++;
 		} else {
 			echo '<div class="error fade"><p>' . sprintf(__('The email address (%s) of the user you are trying to send mail to is not a valid email address format.', MAILUSERS_I18N_DOMAIN), $recipient->user_email) . '</p></div>';
@@ -1528,7 +1569,13 @@ function mailusers_send_mail($recipients = array(), $subject = '', $message = ''
 		            mailusers_debug_wp_mail($to, $subject, $mailtext, array_merge($headers, $bcc)) ;
 				}
 			
-				@wp_mail($to, $subject, $mailtext, array_merge($headers, $bcc)) ;
+                do_action('mailusers_before_wp_mail') ;
+                if ($base64)
+                    @wp_mail($to, sprintf("=UTF-8?B?%s?=",
+                        base64_encode($subject)), base64_encode($mailtext), array_merge($headers, $bcc));
+                else
+				    @wp_mail($to, $subject, $mailtext, array_merge($headers, $bcc)) ;
+                do_action('mailusers_after_wp_mail') ;
 
 				$count = 0;
 				$bcc = array() ;
@@ -1564,7 +1611,13 @@ function mailusers_send_mail($recipients = array(), $subject = '', $message = ''
 		    mailusers_debug_wp_mail($to, $subject, $mailtext, array_merge($headers, $bcc)) ;
 		}
 			
-		@wp_mail($to, $subject, $mailtext, array_merge($headers, $bcc)) ;
+        do_action('mailusers_before_wp_mail') ;
+        if ($base64)
+            @wp_mail($to, sprintf("=UTF-8?B?%s?=",
+                base64_encode($subject)), base64_encode($mailtext), array_merge($headers, $bcc));
+        else
+		    @wp_mail($to, $subject, $mailtext, array_merge($headers, $bcc)) ;
+        do_action('mailusers_after_wp_mail') ;
 	}
 
 	return $num_sent;
@@ -1637,6 +1690,44 @@ function mailusers_dashboard_widget_function() {
     <th><?php _e('Number of Users who accept emails sent to multiple recipients:', MAILUSERS_I18N_DOMAIN); ?></th>
 	<td<?php if ( count($massemails) == 0) echo ' style="color: red;"' ; ?>><?php echo count($massemails) ; ?></td>
 	</tr>
+	</table>
+    </div>
+    <div class="table table_content">
+    <p class="sub"><?php _e('Content Filters', MAILUSERS_I18N_DOMAIN); ?></p>
+    <table style="text-align: left; width: 90%;">
+<?php
+    global $wp_filter;
+    $filters = array(
+        'the_content' => 'http://codex.wordpress.org/Function_Reference/the_content',
+        'the_excerpt' => 'http://codex.wordpress.org/Function_Reference/the_excerpt'
+    ) ;
+    $hooks = array(
+        'wpautop' => 'http://codex.wordpress.org/Function_Reference/wpautop',
+        'wptexturize' => 'http://codex.wordpress.org/Function_Reference/wptexturize',
+        'shortcode_unautop' => 'https://developer.wordpress.org/reference/functions/shortcode_unautop/'
+    ) ;
+
+    //  Loop through filters and hooks checking for anything missing
+ 
+    foreach ($filters as $fkey => $fvalue)
+    {
+        if (has_filter($fkey))
+        {
+            $f = array() ;
+            foreach (array_keys($wp_filter[$fkey]) as $key => $value)
+                $f= array_merge($f, array_keys($wp_filter[$fkey][$value])) ;
+            foreach ($hooks as $key => $value)
+            {
+?>
+   	<tr>
+    <th><a href="<?php echo $fvalue; ?>"><?php echo $fkey; ?></a> / <a href="<?php echo $value; ?>"><?php echo $key; ?></a></th>
+	  <td<?php if (!in_array($key, $f)) echo ' style="color: red;"' ; ?>><?php echo in_array($key, $f) ? __('Present', MAILUSERS_I18N_DOMAIN) : __('Missing', MAILUSERS_I18N_DOMAIN) ; ?></td>
+	</tr>
+<?php
+            }
+        }
+    }
+?>
 	</table>
     </div>
 <?php

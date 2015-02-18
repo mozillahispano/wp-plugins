@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: FancyBox for WordPress
-Plugin URI: http://plugins.josepardilla.com/fancybox-for-wordpress/
+Plugin URI: https://wordpress.org/plugins/fancybox-for-wordpress/
 Description: Integrates <a href="http://fancybox.net/">FancyBox</a> by <a href="http://klade.lv/">Janis Skarnelis</a> into WordPress.
-Version: 3.0.2
+Version: 3.0.5
 Author: Jos&eacute; Pardilla
-Author URI: http://josepardilla.com/
+Author URI: http://twitter.com/moskis
 
  * FancyBox is Copyright (c) 2008 - 2010 Janis Skarnelis
  * Dual licensed under the MIT and GPL licenses:
@@ -20,7 +20,7 @@ Author URI: http://josepardilla.com/
  * Constants
  */
 
-define( 'FBFW_VERSION', '3.0.2' );
+define( 'FBFW_VERSION', '3.0.5' );
 define( 'FBFW_PATH', plugin_dir_path(__FILE__) );
 define( 'FBFW_URL', plugin_dir_url(__FILE__) );
 
@@ -92,7 +92,7 @@ function mfbfw_defaults() {
 
 		// Extra Calls
 		'extraCallsEnable'      => '',
-		'extraCalls'            => '',
+		'extraCallsData'        => '',
 
 		// Uninstall
 		'uninstall'             => ''
@@ -217,9 +217,8 @@ add_action( 'wp_enqueue_scripts', 'mfbfw_styles' );
 function mfbfw_init() {
 
 	$settings = get_option( 'mfbfw' );
-	$version = get_option( 'mfbfw_active_version' );
 
-	echo "\n<!-- Fancybox for WordPress v" . $version . ' -->'; ?>
+	echo "\n<!-- Fancybox for WordPress -->"; ?>
 
 <script type="text/javascript">
 jQuery(function(){
@@ -306,7 +305,7 @@ jQuery("a.fancybox").fancybox({
 
 });
 
-<?php if ( isset($settings['extraCallsEnable']) && $settings['extraCallsEnable'] ) { echo $settings['extraCalls'];  echo "\n"; } ?>
+<?php if ( isset($settings['extraCallsEnable']) && $settings['extraCallsEnable'] ) { echo $settings['extraCallsData'];  echo "\n"; } ?>
 
 })
 </script>
@@ -341,16 +340,7 @@ function mfbfw_admin_options() {
 
 	if ( isset($_GET['page']) && $_GET['page'] == 'fancybox-for-wordpress' ) {
 
-		if ( isset($_REQUEST['action']) && 'update' == $_REQUEST['action'] ) {
-
-			$settings = stripslashes_deep( $_POST['mfbfw'] );
-			$settings = array_map( 'convert_chars', $settings );
-
-			update_option( 'mfbfw', $settings );
-			wp_safe_redirect( add_query_arg('updated', 'true') );
-			die;
-
-		} else if ( isset($_REQUEST['action']) && 'reset' == $_REQUEST['action'] ) {
+		if ( isset($_REQUEST['action']) && 'reset' == $_REQUEST['action'] && check_admin_referer( 'mfbfw-options-reset' ) ) {
 
 			$defaults_array = mfbfw_defaults(); // Store defaults in an array
 			update_option( 'mfbfw', $defaults_array ); // Write defaults to database

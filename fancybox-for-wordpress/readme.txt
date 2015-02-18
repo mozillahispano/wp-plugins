@@ -2,8 +2,8 @@
 Contributors: moskis
 Tags: fancybox, lightbox, jquery, gallery, image, images, photo, photos, picture, pictures
 Requires at least: 3.4
-Tested up to: 3.4
-Stable tag: 3.0.2
+Tested up to: 4.1
+Stable tag: 3.0.5
 License: GPL/MIT
 
 Seamlessly integrates FancyBox into your blog: Upload, activate, and you're done. Additional configuration optional.
@@ -19,11 +19,28 @@ By default, the plugin will use jQuery to apply [FancyBox](http://fancybox.net/)
 
 = Demo =
 
-You can see the plugin working on [this blog](http://plugins.josepardilla.com/fancybox-for-wordpress/) although there's nothing amazing to see, just a FancyBox simple implementation, that's the point ;) You can take a look at the code if you're curious, though.
+You can see the plugin working on [this blog](http://blog.moskis.net/2012/01/20/teclado-apple-en-windows-7/) although there's nothing amazing to see, just a FancyBox simple implementation, that's the point ;) You can take a look at the code if you're curious, though.
+
 
 == Changelog ==
 
 This changelog is for the WordPress plugin. For the Fancybox main changelog go to its [home page](http://fancybox.net/changelog/).
+
+= 3.0.5 =
+* Fixed the Revert Options button.
+* Fixed wrong version number being shown on the plugin's settings page.
+* Updated plugin and author links in readme and settings page.
+* Updated localization catalog (POT file).
+* Updated Spanish translation with minor updates.
+* Updated Frequently Asked Questions in readme file.
+* Removed version number from printed html source code.
+* Removed outdated/incomplete translation binaries.
+
+= 3.0.4 =
+* Renamed the setting affected by the security issue mentioned in 3.0.3. This should stop the malicious code from appearing on sites where the plugin is updated without removing the malicious code.
+
+= 3.0.3 =
+* Fixed a security issue. (Thanks to mickaelb for reporting and Konstantin Kovshenin for providing the fix)
 
 = 3.0.2 =
 * Added support for disabling fancybox on individual hyperlinked images by adding class='nolightbox'. (Thanks to Artem Russakovskii)
@@ -163,6 +180,12 @@ This changelog is for the WordPress plugin. For the Fancybox main changelog go t
 * Moved images to /img/ folder
 
 
+== Upgrade Notice ==
+
+= 3.0.5 =
+Fixes the Revert options button and wrong version number on settings page. Also updates links in settings page and readme file.
+
+
 == Installation ==
 
 1. Upload the `fancybox-for-wordpress` folder to the `/wp-content/plugins/` directory
@@ -173,10 +196,26 @@ This changelog is for the WordPress plugin. For the Fancybox main changelog go t
 
 == Screenshots ==
 
-1. Simple example of fancybox on a post. [Live demo here](http://plugins.josepardilla.com/fancybox-for-wordpress/)
+1. Simple example of fancybox on a post. [Live demo here](http://blog.moskis.net/2012/01/20/teclado-apple-en-windows-7/)
 2. Basic settings on Options Page in the Admin Panel. This makes it very easy to customize the plugin to your needs
 
 
 == Frequently Asked Questions ==
 
-You can find a FAQ section ay [plugins.josepardilla.com](http://plugins.josepardilla.com/fancybox-for-wordpress/faq/).
+**- There was a vulnerability detected in versions 3.0.2 and lower, is my site in danger?**
+
+This vulnerability was patched in version 3.0.3.
+
+An additional change was introduced in version 3.0.4 to make sure that the malicious code can't be printed to visitors even if it still remains in the database.
+
+If you think your site might still be using a vulnerable version of the plugin please log in to your WordPress admin panel, disable the plugin and clear any cache if your site uses a cache system.
+
+If you wish to continue using the plugin, check that the plugin is updated to the latest version from your admin panel and enable it. Then check the plugin's settings page and make sure there's no abnormal code in any of the fields, especially on the Extra Calls tab. If you are not sure about the code you see in the settings please use the Revert to Defaults button at the bottom of the settings page.
+
+If you think your site might be compromised in any other way check this guide: [WordPress Codex - FAQ My site was hacked](http://codex.wordpress.org/FAQ_My_site_was_hacked).
+
+**- Is the FancyBox script vulnerable or unsafe?**
+
+No, there's nothing wrong with the actual FancyBox script that i know of.
+
+The vulnerability detected in versions 3.0.2 and lower of the "FancyBox for WordPress" plugin was limited to the plugin itself. Other FancyBox plugins or manual implementations of FancyBox are unrelated to this issue.
